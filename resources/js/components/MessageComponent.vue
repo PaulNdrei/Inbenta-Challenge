@@ -17,7 +17,7 @@
             }
         },
         data (){
-            return {response: '', history: ['text']}
+            return {response: '', history: ['']}
         },
         mounted() {
         },

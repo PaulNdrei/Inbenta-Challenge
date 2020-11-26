@@ -1920,18 +1920,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       message: '',
-      text: ''
+      text: '',
+      inputInfoMessage: ''
     };
   },
   mounted: function mounted() {},
   methods: {
     sendMessage: function sendMessage() {
-      this.message = this.text;
-      this.text = '';
+      if (this.text) {
+        this.message = this.text;
+        this.text = '';
+        return;
+      }
+
+      this.inputInfoMessage = "Input can not be empty";
     }
   }
 });
@@ -1969,7 +1977,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       response: '',
-      history: ['text']
+      history: ['']
     };
   },
   mounted: function mounted() {},
@@ -37579,6 +37587,9 @@ var render = function() {
       _c("message-component", { attrs: { message: _vm.message } }),
       _vm._v(" "),
       _c("div", { staticClass: "input-group mb-3" }, [
+        _c("span", [_vm._v(_vm._s(_vm.inputInfoMessage))]),
+        _vm._v(" "),
+        _c("br"),
         _c("input", {
           directives: [
             {

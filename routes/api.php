@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatBotApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get("/conversation/history", [App\Http\Controllers\ChatBotApiController::class, 'getHistory']);
+Route::post("/conversation/message", [App\Http\Controllers\ChatBotApiController::class, 'sendMessage']);
