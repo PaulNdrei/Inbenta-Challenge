@@ -16,11 +16,11 @@ class ChatBotApiController extends Controller
     }
 
     public function sendMessage(Request $request){
-        return $this->chatBotApiService->sendMessageAPI($request->message);
+        return $this->chatBotApiService->sendMessage($request->message);
     }
 
     public function getHistory(){
-        return $this->chatBotApiService->getHistoryAPI();
+        return $this->chatBotApiService->getHistory();
     }
 
 

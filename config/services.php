@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'inbenta' => [
+        'api_key' => env('INBENTA_API_KEY'),
+        'secret' => env('INBENTA_SECRET'),
+        'auth_url' => env('INBENTA_AUTH_URL'),
+    ],
+
 ];
