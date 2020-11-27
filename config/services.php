@@ -34,6 +34,9 @@ return [
         'api_key' => env('INBENTA_API_KEY'),
         'secret' => env('INBENTA_SECRET'),
         'auth_url' => env('INBENTA_AUTH_URL'),
+        'conversation_endpoint' => env('INBENTA_API_CONVERSATION_ENDPOINT'),
+        'conversation_message_endpoint' => env('INBENTA_API_CONVERSATION_MESSAGE_ENDPOINT'),
+        'conversation_history_endpoint' => env('INBENTA_API_CONVERSATION_HISTORY_ENDPOINT'),
     ],
 
 ];

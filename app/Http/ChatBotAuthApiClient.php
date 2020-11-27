@@ -19,7 +19,14 @@ class ChatBotAuthApiClient
         $this->secret = config('services.inbenta.secret');
     }
 
-    public function auth(){
+
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+
+    public function createAuth(){
 
         $headers = [
             'x-inbenta-key' => $this->apiKey,
@@ -51,12 +58,8 @@ class ChatBotAuthApiClient
     }
 
     public function isExpired(){
-        $expiration = session()->get('expirationToken');
+        return time() >= session()->get('expirationToken');
 
-        if (time() >= $expiration){
-            return true;
-        }
-        return false;
     }
 
 
