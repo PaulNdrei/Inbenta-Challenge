@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Services;
 
-use App\Http\ChatBotAuthApiClient;
+use App\Http\Authentication\ChatBotApiAuthentication;
+use App\Http\Session\ConversationSession;
+use App\Http\Session\SessionHandler;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -12,79 +14,66 @@ class ChatBotApiService
      * ChatBotApiService constructor.
      */
 
-    private $accessToken;
-    private $chatBotApiUrl;
 
-    private $chatBotAuthApiClient;
-
-    public function __construct(ChatBotAuthApiClient $chatBotAuthApiClient)
+    public function __construct()
     {
-        $this->chatBotAuthApiClient = $chatBotAuthApiClient;
-    }
-
-    public function createConversationAndGetSessionToken(){
-        if (!$this->isValidCredentials()){
-            $this->chatBotAuthApiClient->createAuth();
-        }
-
-        $accessToken = session()->get("chatbot.credentials.accessToken");
-        $chatBotApiUrl = session()->get("chatbot.credentials.chatBotApiUrl");
-        $headers = ['x-inbenta-key' => $this->chatBotAuthApiClient->getApiKey(),
-            'Authorization' => 'Bearer '.$accessToken];
-
-        $response = Http::withHeaders($headers)->post($chatBotApiUrl);
-
-        if ($response->ok()){
-            $response = json_decode($response);
-            $sessionToken = $response->sessionToken;
-
-            session(['chatbot.credentials.sessionToken'], $sessionToken);
-            /*Save session expire timestamp, according to Inbenta API session token expires after 30 minuts of inactivity */
-            session(['chatbot.credentials.sessionExpiration', time() + 1800]);
-            return $sessionToken;
-
-        }
 
     }
-    public function sendMessage(String $message){
 
-        $accessToken = session()->get("chatbot.credentials.accessToken");
-        $sessionToken = session()->get("chatbot.credentials.sessionToken");
+    public function sendMessageAndGetAnswer(String $message){
+        $session = null;
 
-        if (!$this->isValidConversationSession()){
-            $sessionToken = $this->createConversationAndGetSessionToken();
+        $chatBotApiAuthentication = new ChatBotApiAuthentication();
+        $authCredentials = $chatBotApiAuthentication->createOrGetAuthCredentials();
+
+        $conversationSession = new ConversationSession($authCredentials);
+        $messageSession = $conversationSession->createOrGetSession();
+
+        if ($messageSession != null){
+
+            $headers = ['x-inbenta-key' => $chatBotApiAuthentication->getApiKey(),
+                'Authorization' => 'Bearer '.$authCredentials->getAccessToken(), 'x-inbenta-session' => 'Bearer '.$messageSession->getSessionToken()];
+
+            Log::debug("x-inbenta-key: ".$chatBotApiAuthentication->getApiKey());
+            Log::debug("Authorization: ".$authCredentials->getAccessToken());
+            Log::debug("x-inbenta-session: ".$messageSession->getSessionToken());
+
+
+            $body = [
+                'message' => $message
+            ];
+
+            Log::debug("Message: ".$message);
+
+
+            $apiMessageEndPoint = config('services.inbenta.conversation_message_endpoint');
+            $urlRequest = $authCredentials->getChatBotApiUrl().''.$apiMessageEndPoint;
+
+            Log::debug("Trying to send message to Inbenta ChatBot API to: ".$urlRequest);
+
+
+            $response = Http::withHeaders($headers)->post($urlRequest, $body);
+
+            Log::debug("Response from Inbenta Chat Bot API: ".$response);
+
+            if ($response->ok()){
+                //$response = json_decode($response);
+
+                return $response;
+            }
+            return "error";
         }
 
-        $headers = ['x-inbenta-key' => $this->chatBotAuthApiClient->getApiKey(),
-            'Authorization' => 'Bearer '.$accessToken, 'x-inbenta-session' => 'Bearer '.$sessionToken];
-
-        $response = Http::withHeaders($headers)->post();
-
-
+        return "error2";
 
     }
+
     public function getHistory(){
-
-        Log::debug("ChatBotApiService: Getting History ");
-        if (!$this->isValidCredentials()){
-            Log::debug("ChatBotApiService: Credentials not valid, trying to get new credentials");
-
-            $this->chatBotAuthApiClient->createAuth();
-        }
-
-        Log::debug($this->getCredentialsData());
 
         return "test";
 
     }
 
-    public function isValidCredentials(){
-        return $this->chatBotAuthApiClient->isExpired() || !$this->getCredentialsData();
-    }
-    public function isValidConversationSession(){
-        return session()->get('sessionExpiration') < time() && session()->get('sessionToken');
-    }
-    public function getCredentialsData () {
-        return session()->get('chatbot.credentials');
-    }
+
+
 }
