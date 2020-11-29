@@ -19,5 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get("/conversation/history", [App\Http\Controllers\ChatBotApiController::class, 'getHistory']);
-Route::post("/conversation/message", [App\Http\Controllers\ChatBotApiController::class, 'sendMessage']);
+Route::get("conversation/history", [App\Http\Controllers\ChatBotApiController::class, 'getHistory']);
+Route::post("conversation/message", [App\Http\Controllers\ChatBotApiController::class, 'sendMessage']);

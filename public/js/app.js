@@ -1954,7 +1954,7 @@ __webpack_require__.r(__webpack_exports__);
             return _this.inputInfoMessage = "";
           }
         };
-        axios.post('http://inbenta-challenge.test:8000/api/conversation/message', {
+        axios.post('http://inbenta-challenge.test/api/conversation/message', {
           message: tempMessageObject.content
         }, axiosConfig).then(function (response) {
           return _this.message = {

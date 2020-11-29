@@ -31,9 +31,11 @@
                     this.message = tempMessageObject;
                     this.text = '';
 
-                    let axiosConfig = {onUploadProgress: progressUpload => this.inputInfoMessage = "writing...", onDownloadProgress: progressEvent => this.inputInfoMessage = "" }
-
-                    axios.post('http://inbenta-challenge.test:8000/api/conversation/message', {message: tempMessageObject.content}, axiosConfig)
+                    let axiosConfig = {
+                        onUploadProgress: progressUpload => this.inputInfoMessage = "writing...",
+                        onDownloadProgress: progressEvent => this.inputInfoMessage = ""
+                    }
+                    axios.post('http://inbenta-challenge.test/api/conversation/message', {message: tempMessageObject.content}, axiosConfig)
                     .then(response => (this.message = {content: response.data.answers[0].message, bot: true}))
                     .catch(error => console.log(error))
                     return;
