@@ -1,12 +1,13 @@
 <template>
     <div class="container">
+        <div class="row">
+            <message-component :message="message"></message-component>
 
-        <message-component :message="message"></message-component>
-
-        <div class="input-group mb-3">
-            <span>{{inputInfoMessage}}</span>
-            <br><input v-model="text" type="text" class="form-control" aria-describedby="Default">
-            <button  @click="sendMessage" class="btn-sm btn-outline-primary" type="button">Send!</button>
+            <div class="col-sm-6">
+                <span class="inputInfoText">{{inputInfoMessage}}</span>
+                <br><input v-model="text" type="text" class="form-control" aria-describedby="Default">
+                <button  @click="sendMessage" class="btn-sm btn-outline-primary" type="button">Send!</button>
+            </div>
 
         </div>
     </div>
@@ -16,7 +17,7 @@
     export default {
         data (){
             return {
-                message: '',
+                message: {content: String, bot: Boolean},
                 text: '',
                 inputInfoMessage: ''
             }
@@ -26,15 +27,27 @@
         methods : {
             sendMessage: function() {
                 if (this.text){
-                    this.message = this.text;
+                    let tempMessageObject = {content: this.text, bot: false};
+                    this.message = tempMessageObject;
                     this.text = '';
+
+                    let axiosConfig = {onUploadProgress: progressUpload => this.inputInfoMessage = "writing...", onDownloadProgress: progressEvent => this.inputInfoMessage = "" }
+
+                    axios.post('http://inbenta-challenge.test:8000/api/conversation/message', {message: tempMessageObject.content}, axiosConfig)
+                    .then(response => (this.message = {content: response.data.answers[0].message, bot: true}))
+                    .catch(error => console.log(error))
                     return;
                 }
                 this.inputInfoMessage = "Input can not be empty";
 
-                
-                
-            }
+            },
+
         }
     }
 </script>
+
+<style>
+    .inputInfoText{
+        font-size: 0.7rem;
+    }
+</style>

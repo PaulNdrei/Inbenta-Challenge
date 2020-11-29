@@ -9,16 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class ChatBotApiService
 {
-
-    /**
-     * ChatBotApiService constructor.
-     */
-
-
-    public function __construct()
-    {
-
-    }
+    public function __construct(){}
 
     public function sendMessageAndGetAnswer(String $message){
         $session = null;
@@ -61,7 +52,7 @@ class ChatBotApiService
 
                 return $response;
             }
-            return "error";
+            return $response->status();
         }
 
         return "error2";
