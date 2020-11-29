@@ -5,6 +5,7 @@ namespace App\Http\Authentication;
 
 
 
+use App\Http\Session\SessionHandler;
 use Illuminate\Support\Facades\Log;
 
 class ChatBotAuthCredentials
@@ -13,12 +14,6 @@ class ChatBotAuthCredentials
     private $chatBotApiUrl;
     private $expiration;
 
-    /**
-     * ChatBotAuthCredentials constructor.
-     * @param $accessToken
-     * @param $chatBotApiUrl
-     * @param $expiration
-     */
     public function __construct($accessToken, $chatBotApiUrl, $expiration)
     {
         $this->accessToken = $accessToken;
@@ -50,9 +45,10 @@ class ChatBotAuthCredentials
             'chatbot.credentials.expiration' => $this->expiration]);
     }
 
-    public function isCredentialsExpired(){
 
-        return time() >= json_decode($this->getValuesFromSession())->expiration;
+    public function __toString()
+    {
+        return "{".$this->accessToken.", ".$this->chatBotApiUrl.", ".$this->expiration."}";
     }
 
 

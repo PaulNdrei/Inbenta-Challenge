@@ -13,6 +13,7 @@ class SessionHandler
         return json_encode(session()->get('chatbot.credentials'));
     }
 
+
     public static function getSessionFromStorage(): Session
     {
         $values = json_decode(SessionHandler::getSessionValues());
@@ -22,7 +23,13 @@ class SessionHandler
     public static function getSessionValues()
     {
         $sessionValues = session()->get('chatbot.conversation');
-        return is_null($sessionValues) ? null: json_encode($sessionValues);
+
+        //Log::debug("Session values: ".json_encode($sessionValues));
+        return json_encode($sessionValues);
+    }
+
+    public static function hasConversationSessionValues(){
+        return $hasValues = session()->has('chatbot.conversation');
     }
 
     public static function saveConversationSession(Session $session){

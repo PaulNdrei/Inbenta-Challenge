@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 class ChatBotApiAuthentication
 {
 
-    private $authCredentials;
     private $authUrl;
     private $apiKey;
     private $secret;
@@ -28,12 +27,13 @@ class ChatBotApiAuthentication
         Log::debug("createOrGetAuthCredentials()");
 
         $authCredentials = $this->getCredentialsObjectFromSession();
-        Log::debug($authCredentials);
 
         if (is_null($authCredentials)){
             Log::debug("Create new credentials... IS NULL");
             $authCredentials = $this->createAndGetAuthCredentialsFromKeyAndSecret();
         }
+
+        Log::debug($authCredentials);
 
         return $authCredentials;
     }
@@ -41,13 +41,15 @@ class ChatBotApiAuthentication
     public function getCredentialsObjectFromSession():?ChatBotAuthCredentials
     {
         $authCredentials = json_decode(SessionHandler::getCredentialsValuesFromSession());
-        if ($authCredentials) return new ChatBotAuthCredentials($authCredentials->accessToken, $authCredentials->chatBotApiUrl, $authCredentials->expiration);
+
+        if ($authCredentials != null && !$this->isCredentialsExpired()){
+            Log::debug("Authentication: Local credentials are valid and not expired.");
+            return new ChatBotAuthCredentials($authCredentials->accessToken, $authCredentials->chatBotApiUrl, $authCredentials->expiration);
+        }
 
         return null;
 
     }
-
-
 
     public function getApiKey()
     {
@@ -80,9 +82,9 @@ class ChatBotApiAuthentication
             $expiration = $response->expiration;
 
             $authCredentials = new ChatBotAuthCredentials($accessToken, $chatBotApiUrl, $expiration);
+            $authCredentials->saveCredentialsToSession();
 
-
-            Log::debug("Auth succesfully");
+            Log::debug("Auth create succesfully");
 
             return $authCredentials;
 
@@ -91,5 +93,9 @@ class ChatBotApiAuthentication
 
         return null;
     }
+    public function isCredentialsExpired(){
+        return time() >= json_decode(SessionHandler::getCredentialsValuesFromSession())->expiration;
+    }
+
 
 }
