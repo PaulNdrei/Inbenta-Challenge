@@ -21,48 +21,28 @@ class ChatBotApiAuthentication
         $this->secret = config('services.inbenta.secret');
     }
 
-
-    public function createOrGetAuthCredentials(): ?ChatBotAuthCredentials
-    {
-        Log::debug("createOrGetAuthCredentials()");
-
-        $authCredentials = $this->getCredentialsObjectFromSession();
-
-        if (is_null($authCredentials)){
-            Log::debug("Create new credentials... IS NULL");
-            $authCredentials = $this->createAndGetAuthCredentialsFromKeyAndSecret();
-        }
-
-        Log::debug($authCredentials);
-
-        return $authCredentials;
-    }
-
-    public function getCredentialsObjectFromSession():?ChatBotAuthCredentials
-    {
-        $authCredentials = json_decode(SessionHandler::getCredentialsValuesFromSession());
-
-        if ($authCredentials != null && !$this->isCredentialsExpired()){
-            Log::debug("Authentication: Local credentials are valid and not expired.");
-            return new ChatBotAuthCredentials($authCredentials->accessToken, $authCredentials->chatBotApiUrl, $authCredentials->expiration);
-        }
-
-        return null;
-
-    }
-
     public function getApiKey()
     {
         return $this->apiKey;
     }
 
+    public function createOrGetAuthCredentials(): ?ChatBotAuthCredentials
+    {
+        Log::debug("Authentication: Attemting to get or create new credentials...");
+
+        $authCredentials = SessionHandler::checkIfCredentialsAreValidAndGet();
+
+        if (is_null($authCredentials)){
+            $authCredentials = $this->createAndGetAuthCredentialsFromKeyAndSecret();
+        }
+
+        return $authCredentials;
+    }
+
 
     public function createAndGetAuthCredentialsFromKeyAndSecret(): ?ChatBotAuthCredentials
     {
-
-        Log::debug("Apikey: ".$this->getApiKey());
-        Log::debug("Secret: ".$this->secret);
-        Log::debug("Authurl: ".$this->authUrl);
+        Log::debug("Authentication: Creating new credentials...");
 
         $headers = [
             'x-inbenta-key' => $this->getApiKey(),
@@ -84,7 +64,7 @@ class ChatBotApiAuthentication
             $authCredentials = new ChatBotAuthCredentials($accessToken, $chatBotApiUrl, $expiration);
             $authCredentials->saveCredentialsToSession();
 
-            Log::debug("Auth create succesfully");
+            Log::debug("Authentication: New credentials created succesfully!");
 
             return $authCredentials;
 
@@ -92,9 +72,6 @@ class ChatBotApiAuthentication
         $response->throw();
 
         return null;
-    }
-    public function isCredentialsExpired(){
-        return time() >= json_decode(SessionHandler::getCredentialsValuesFromSession())->expiration;
     }
 
 

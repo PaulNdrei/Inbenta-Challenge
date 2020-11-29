@@ -12,7 +12,6 @@ class ChatBotApiService
     public function __construct(){}
 
     public function sendMessageAndGetAnswer(String $message){
-        $session = null;
 
         $chatBotApiAuthentication = new ChatBotApiAuthentication();
         $authCredentials = $chatBotApiAuthentication->createOrGetAuthCredentials();
@@ -24,11 +23,6 @@ class ChatBotApiService
 
             $headers = ['x-inbenta-key' => $chatBotApiAuthentication->getApiKey(),
                 'Authorization' => 'Bearer '.$authCredentials->getAccessToken(), 'x-inbenta-session' => 'Bearer '.$messageSession->getSessionToken()];
-
-            Log::debug("x-inbenta-key: ".$chatBotApiAuthentication->getApiKey());
-            Log::debug("Authorization: ".$authCredentials->getAccessToken());
-            Log::debug("x-inbenta-session: ".$messageSession->getSessionToken());
-
 
             $body = [
                 'message' => $message
@@ -48,18 +42,43 @@ class ChatBotApiService
             Log::debug("Response from Inbenta Chat Bot API: ".$response);
 
             if ($response->ok()){
+                $response = json_decode($response);
+                return response()->json(['answer' => $response->answers[0]->message], 200);
+            }
+        }
+
+        response()->json(['error' => 'Not posible to get and answer.'], 400);
+
+    }
+
+    public function getHistory(){
+
+        $messageSession = SessionHandler::checkIfSessionIsValidAndGet();
+
+        if ($messageSession != null){
+            $chatBotApiAuthentication = new ChatBotApiAuthentication();
+            $authCredentials = $chatBotApiAuthentication->createOrGetAuthCredentials();
+            $headers = ['x-inbenta-key' => $chatBotApiAuthentication->getApiKey(),
+                'Authorization' => 'Bearer '.$authCredentials->getAccessToken(), 'x-inbenta-session' => 'Bearer '.$messageSession->getSessionToken()];
+
+
+            $apiHistoryEndPoint = config('services.inbenta.conversation_history_endpoint');
+            $urlRequest = $authCredentials->getChatBotApiUrl().''.$apiHistoryEndPoint;
+
+            Log::debug("Trying to get history of session to Inbenta ChatBot API to: ".$urlRequest);
+
+            $response = Http::withHeaders($headers)->get($urlRequest);
+
+            Log::debug("Response from Inbenta Chat Bot API: ".$response);
+
+            if ($response->ok()){
                 //$response = json_decode($response);
 
                 return $response;
             }
             return $response->status();
+
         }
-
-        return "error2";
-
-    }
-
-    public function getHistory(){
 
         return "test";
 

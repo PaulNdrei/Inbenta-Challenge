@@ -22,10 +22,13 @@ class ConversationSession
        $this->authCredentials = $authCredentials;
     }
 
-    public function createOrGetSession(): ?Session{
+    public function createOrGetSession(): ?Session
+    {
         Log::debug("CreateOrGetSession");
 
-        if (!$this->isSessionValid()){
+        $messageSession = SessionHandler::checkIfSessionIsValidAndGet();
+
+        if (is_null($messageSession)){
             Log::debug("Creating new chatbot conversation session... Not valid");
 
             $chatBotApiUrl = $this->authCredentials->getChatBotApiUrl();
@@ -43,36 +46,14 @@ class ConversationSession
                 $sessionToken = $response->sessionToken;
                 //Save session expire timestamp, according to Inbenta API session token expires after 30 minuts of inactivity
                 $sessionExpiration =  time() + 1800;
-                $session = new Session($sessionToken, $sessionExpiration);
-                SessionHandler::saveConversationSession($session);
-                return $session;
+
+                $messageSession = new Session($sessionToken, $sessionExpiration);
+                SessionHandler::saveConversationSession($messageSession);
 
             }
-
-        }else{
-            return SessionHandler::getSessionFromStorage();
         }
+        return $messageSession;
 
-        return null;
-    }
-
-    /*Checks if the session stored in localstorage is not expired or exists*/
-    public function isSessionValid(): bool
-    {
-        $hasValues = SessionHandler::hasConversationSessionValues();
-
-        if (!$hasValues){
-            Log::debug("isSessionValidMethod: Values null");
-            return false;
-        }
-        $values = json_decode(SessionHandler::getSessionValues());
-
-        if ($values->sessionExpiration < time()){
-            Log::debug("isSessionValidMethod: Session expired");
-            return false;
-        }
-        Log::debug("Conversation session is valid");
-        return true;
     }
 
 }

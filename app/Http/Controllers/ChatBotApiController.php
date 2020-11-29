@@ -19,6 +19,7 @@ class ChatBotApiController extends Controller
         if ($request->has('message')){
             return $this->chatBotApiService->sendMessageAndGetAnswer($request->message);
         }
+        return response()->json(['error' => 'Message field is required'], 400);
 
     }
 
