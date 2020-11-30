@@ -7,6 +7,7 @@ namespace App\Http\Session;
 use App\Http\Authentication\ChatBotAuthCredentials;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class SessionHandler
 {
@@ -70,6 +71,19 @@ class SessionHandler
             'chatbot.conversation.sessionExpiration' => $session->getSessionExpiration()] );
 
         Log::debug("Session data saved");
+    }
+
+    public static function setLastFound(bool $lastFound)
+    {
+        session()->put('chatbot.lastFound', $lastFound);
+    }
+
+    public static function getLastFound()
+    {
+        if (session()->has('chatbot.lastFound')){
+            return session()->get('chatbot.lastFound');
+        }
+        return true;
     }
 
 }

@@ -11,7 +11,8 @@ class ChatBotApiService
 {
     public function __construct(){}
 
-    public function sendMessageAndGetAnswer(String $message){
+    public function sendMessageAndGetAnswer(String $message)
+    {
 
         $chatBotApiAuthentication = new ChatBotApiAuthentication();
         $authCredentials = $chatBotApiAuthentication->createOrGetAuthCredentials();
@@ -19,40 +20,73 @@ class ChatBotApiService
         $conversationSession = new ConversationSession($authCredentials);
         $messageSession = $conversationSession->createOrGetSession();
 
-        if ($authCredentials == null){
+        if ($authCredentials == null) {
             return response()->json(['error' => 'Not posible to authenticate to Chat Bot Api'], 401);
         }
 
-        if ($messageSession != null){
+        if ($messageSession != null) {
 
             $headers = ['x-inbenta-key' => $chatBotApiAuthentication->getApiKey(),
-                'Authorization' => 'Bearer '.$authCredentials->getAccessToken(), 'x-inbenta-session' => 'Bearer '.$messageSession->getSessionToken()];
+                'Authorization' => 'Bearer ' . $authCredentials->getAccessToken(), 'x-inbenta-session' => 'Bearer ' . $messageSession->getSessionToken()];
 
             $body = [
                 'message' => $message
             ];
 
-            Log::debug("Message: ".$message);
+            Log::debug("Message: " . $message);
 
 
             $apiMessageEndPoint = config('services.inbenta.conversation_message_endpoint');
-            $urlRequest = $authCredentials->getChatBotApiUrl().''.$apiMessageEndPoint;
+            $urlRequest = $authCredentials->getChatBotApiUrl() . '' . $apiMessageEndPoint;
 
-            Log::debug("Trying to send message to Inbenta ChatBot API to: ".$urlRequest);
+            Log::debug("Trying to send message to Inbenta ChatBot API to: " . $urlRequest);
 
 
             $response = Http::withHeaders($headers)->post($urlRequest, $body);
 
-            Log::debug("Response from Inbenta Chat Bot API: ".$response);
+            Log::debug("Response from Inbenta Chat Bot API: " . $response);
 
-            if ($response->ok()){
+
+            if ($response->successful()) {
+
                 $response = json_decode($response);
-                return response()->json(['answer' => $response->answers[0]->message], 200);
+                $test = null;
+                $flags = $response->answers[0]->flags;
+
+                $dataReturnResponse = ['answer' => $response->answers[0]->message];
+
+                $notFound = $this->arrayKeyExists("no-results", $flags);
+                if ($notFound) {
+                    Log::debug("Not found: Not Found");
+                    $lastFound = SessionHandler::getLastFound();
+                    //Log::debug("Not found Value: ".$notFoundValue);
+                    if (!$lastFound) {
+                        $swApiService = new SWApiService();
+                        $swResponse = $swApiService->getFirstTenStarWarsCharacters();
+                        if ($swResponse->successful()) {
+                            $swResponse = json_decode($swResponse);
+                            SessionHandler::setLastFound(true);
+                            $dataReturnResponse = ['answer' => $response->answers[0]->message, 'notFound' => true, 'notFoundOptions' => $swResponse->data->allPeople->people];
+                            return response()->json($dataReturnResponse, 200);
+                        }
+                    }
+                    SessionHandler::setLastFound(false);
+                }else{
+                    SessionHandler::setLastFound(true);
+                }
+                return response()->json($dataReturnResponse, 200);
+            }
+            return response()->json(['error' => 'Not posible to get and answer.'], 400);
+        }
+    }
+
+    public function arrayKeyExists(String $key, $arrayResponse){
+        for ($i = 0; $i<count($arrayResponse); $i++){
+            if ($arrayResponse[$i] == $key){
+                return true;
             }
         }
-
-        return response()->json(['error' => 'Not posible to get and answer.'], 400);
-
+        return false;
     }
 
     public function getHistory(){
@@ -75,7 +109,7 @@ class ChatBotApiService
 
             Log::debug("Response from Inbenta Chat Bot API: ".$response);
 
-            if ($response->ok()){
+            if ($response->successful()){
                 return $response;
             }
         }

@@ -25,7 +25,7 @@
         },
         mounted() {
             let $this = this;
-            let urlRequest = "https://inbenta-challenge-paulandrei.herokuapp.com/api/conversation/history";
+            let urlRequest = "https://inbenta-challenge.test/api/conversation/history";
 
             axios.get(urlRequest)
                 .then(function (response){

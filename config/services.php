@@ -38,5 +38,8 @@ return [
         'conversation_message_endpoint' => env('INBENTA_API_CONVERSATION_MESSAGE_ENDPOINT'),
         'conversation_history_endpoint' => env('INBENTA_API_CONVERSATION_HISTORY_ENDPOINT'),
     ],
+    'inbentasw' => [
+        'api_url' => env('INBENTA_SW_API_URL'),
+    ],
 
 ];

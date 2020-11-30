@@ -32,10 +32,13 @@
                         onUploadProgress: progressUpload => this.inputInfoMessage = "YodaBot is writing...",
                         onDownloadProgress: progressEvent => this.inputInfoMessage = ""
                     }
-                    let urlRequest = "https://inbenta-challenge-paulandrei.herokuapp.com/api/conversation/message";
+                    let urlRequest = "https://inbenta-challenge.test/api/conversation/message";
 
                     axios.post(urlRequest, {message: tempMessageObject.content}, axiosConfig)
-                    .then(response => (this.message = {content: response.data.answer, bot: true}))
+                    .then(response => (
+
+                        this.message = {content: response.data.answer, bot: true})
+                    )
                     .catch(error => console.log(error))
                     return;
                 }
