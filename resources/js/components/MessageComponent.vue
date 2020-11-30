@@ -25,7 +25,9 @@
         },
         mounted() {
             let $this = this;
-            axios.get("http://inbenta-challenge.test/api/conversation/history")
+            let urlRequest = process.env.VUE_APP_API_URL+''+process.env.VUE_APP_API_HISTORY_ENDPOINT;
+
+            axios.get(urlRequest)
                 .then(function (response){
                     let historyMessages = response.data;
                     for (let i = 0; i < historyMessages.length; i++){
