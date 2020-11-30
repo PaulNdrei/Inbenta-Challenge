@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div>
         <ul>
             <li v-for="message in messages">
                 <span class="senderName" v-if="message.bot">YodaBot: </span>
@@ -25,7 +25,7 @@
         },
         mounted() {
             let $this = this;
-            axios.get('http://inbenta-challenge.test/api/conversation/history')
+            axios.get("http://inbenta-challenge.test/api/conversation/history")
                 .then(function (response){
                     let historyMessages = response.data;
                     for (let i = 0; i < historyMessages.length; i++){

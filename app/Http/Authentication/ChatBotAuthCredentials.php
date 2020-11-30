@@ -3,9 +3,6 @@
 
 namespace App\Http\Authentication;
 
-
-
-use App\Http\Session\SessionHandler;
 use Illuminate\Support\Facades\Log;
 
 class ChatBotAuthCredentials
@@ -22,31 +19,23 @@ class ChatBotAuthCredentials
 
     }
 
-    public function getAccessToken()
+    public function getAccessToken(): ?string
     {
         return $this->accessToken;
     }
 
-    public function getChatBotApiUrl()
+    public function getChatBotApiUrl(): ?string
     {
         return $this->chatBotApiUrl;
     }
 
-    public function getExpiration()
+    public function getExpiration(): ?int
     {
         return $this->expiration;
     }
 
-    public function saveCredentialsToSession(): void
-    {
-        Log::debug("Credentials saved to session. ".$this->expiration);
 
-        session(['chatbot.credentials.accessToken' => $this->accessToken, 'chatbot.credentials.chatBotApiUrl' => $this->chatBotApiUrl,
-            'chatbot.credentials.expiration' => $this->expiration]);
-    }
-
-
-    public function __toString()
+    public function __toString(): ?string
     {
         return "{".$this->accessToken.", ".$this->chatBotApiUrl.", ".$this->expiration."}";
     }

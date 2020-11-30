@@ -1,15 +1,12 @@
 <template>
     <div class="container">
-        <div class="row">
-            <message-component :message="message"></message-component>
+        <message-component class="col-sm-8" :message="message"></message-component>
 
-            <div class="col-sm-6">
-                <span class="inputInfoText">{{inputInfoMessage}}</span>
-                <input v-model="text" type="text" class="form-control" aria-describedby="Default">
-                <button  @click="sendMessage" class="btn-sm btn-outline-primary" type="button">Send!</button>
-            </div>
-
-        </div>
+        <span class="inputInfoText">{{inputInfoMessage}}</span>
+        <form v-on:submit.prevent class="form-inline">
+            <input v-model="text" type="text" class="form-control col-sm-6">
+            <button  @click="sendMessage" class="btn btn-primary m-2" type="submit">Send!</button>
+        </form>
     </div>
 </template>
 
@@ -32,15 +29,15 @@
                     this.text = '';
 
                     let axiosConfig = {
-                        onUploadProgress: progressUpload => this.inputInfoMessage = "writing...",
+                        onUploadProgress: progressUpload => this.inputInfoMessage = "YodaBot is writing...",
                         onDownloadProgress: progressEvent => this.inputInfoMessage = ""
                     }
-                    axios.post('http://inbenta-challenge.test/api/conversation/message', {message: tempMessageObject.content}, axiosConfig)
+                    axios.post("http://inbenta-challenge.test/api/conversation/message", {message: tempMessageObject.content}, axiosConfig)
                     .then(response => (this.message = {content: response.data.answer, bot: true}))
                     .catch(error => console.log(error))
                     return;
                 }
-                this.inputInfoMessage = "Input can not be empty";
+                this.inputInfoMessage = "Input can not be empty...";
 
             },
 
@@ -51,5 +48,6 @@
 <style>
     .inputInfoText{
         font-size: 0.7rem;
+        font-style: italic;
     }
 </style>

@@ -1920,9 +1920,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1948,13 +1945,13 @@ __webpack_require__.r(__webpack_exports__);
         this.text = '';
         var axiosConfig = {
           onUploadProgress: function onUploadProgress(progressUpload) {
-            return _this.inputInfoMessage = "writing...";
+            return _this.inputInfoMessage = "YodaBot is writing...";
           },
           onDownloadProgress: function onDownloadProgress(progressEvent) {
             return _this.inputInfoMessage = "";
           }
         };
-        axios.post('http://inbenta-challenge.test/api/conversation/message', {
+        axios.post("http://inbenta-challenge.test/api/conversation/message", {
           message: tempMessageObject.content
         }, axiosConfig).then(function (response) {
           return _this.message = {
@@ -1967,7 +1964,7 @@ __webpack_require__.r(__webpack_exports__);
         return;
       }
 
-      this.inputInfoMessage = "Input can not be empty";
+      this.inputInfoMessage = "Input can not be empty...";
     }
   }
 });
@@ -2014,7 +2011,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var $this = this;
-    axios.get('http://inbenta-challenge.test/api/conversation/history').then(function (response) {
+    axios.get("http://inbenta-challenge.test/api/conversation/history").then(function (response) {
       var historyMessages = response.data;
 
       for (var i = 0; i < historyMessages.length; i++) {
@@ -6480,7 +6477,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.inputInfoText{\n    font-size: 0.7rem;\n}\n", ""]);
+exports.push([module.i, "\n.inputInfoText{\n    font-size: 0.7rem;\n    font-style: italic;\n}\n", ""]);
 
 // exports
 
@@ -38324,18 +38321,30 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c(
-      "div",
-      { staticClass: "row" },
-      [
-        _c("message-component", { attrs: { message: _vm.message } }),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-sm-6" }, [
-          _c("span", { staticClass: "inputInfoText" }, [
-            _vm._v(_vm._s(_vm.inputInfoMessage))
-          ]),
-          _vm._v(" "),
+  return _c(
+    "div",
+    { staticClass: "container" },
+    [
+      _c("message-component", {
+        staticClass: "col-sm-8",
+        attrs: { message: _vm.message }
+      }),
+      _vm._v(" "),
+      _c("span", { staticClass: "inputInfoText" }, [
+        _vm._v(_vm._s(_vm.inputInfoMessage))
+      ]),
+      _vm._v(" "),
+      _c(
+        "form",
+        {
+          staticClass: "form-inline",
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+            }
+          }
+        },
+        [
           _c("input", {
             directives: [
               {
@@ -38345,8 +38354,8 @@ var render = function() {
                 expression: "text"
               }
             ],
-            staticClass: "form-control",
-            attrs: { type: "text", "aria-describedby": "Default" },
+            staticClass: "form-control col-sm-6",
+            attrs: { type: "text" },
             domProps: { value: _vm.text },
             on: {
               input: function($event) {
@@ -38361,17 +38370,17 @@ var render = function() {
           _c(
             "button",
             {
-              staticClass: "btn-sm btn-outline-primary",
-              attrs: { type: "button" },
+              staticClass: "btn btn-primary m-2",
+              attrs: { type: "submit" },
               on: { click: _vm.sendMessage }
             },
             [_vm._v("Send!")]
           )
-        ])
-      ],
-      1
-    )
-  ])
+        ]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -38395,7 +38404,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
+  return _c("div", [
     _c(
       "ul",
       _vm._l(_vm.messages, function(message) {

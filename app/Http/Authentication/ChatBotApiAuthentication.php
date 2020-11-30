@@ -62,7 +62,7 @@ class ChatBotApiAuthentication
             $expiration = $response->expiration;
 
             $authCredentials = new ChatBotAuthCredentials($accessToken, $chatBotApiUrl, $expiration);
-            $authCredentials->saveCredentialsToSession();
+            SessionHandler::saveCredentialsToSession($authCredentials);
 
             Log::debug("Authentication: New credentials created succesfully!");
 

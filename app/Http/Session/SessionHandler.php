@@ -51,9 +51,18 @@ class SessionHandler
             return null;
         }
 
-
     }
 
+
+    public static function saveCredentialsToSession(ChatBotAuthCredentials $authCredentials): void
+    {
+
+        session(['chatbot.credentials.accessToken' => $authCredentials->getAccessToken(), 'chatbot.credentials.chatBotApiUrl' => $authCredentials->getChatBotApiUrl(),
+            'chatbot.credentials.expiration' => $authCredentials->getExpiration()]);
+
+        Log::debug("Credentials saved to session. ");
+
+    }
 
     public static function saveConversationSession(Session $session): void
     {
