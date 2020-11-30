@@ -25,7 +25,7 @@
         },
         mounted() {
             let $this = this;
-            let urlRequest = process.env.VUE_APP_API_URL+''+process.env.VUE_APP_API_HISTORY_ENDPOINT;
+            let urlRequest = "https://inbenta-challenge-paulandrei.herokuapp.com/api/conversation/history";
 
             axios.get(urlRequest)
                 .then(function (response){
