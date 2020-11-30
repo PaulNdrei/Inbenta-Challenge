@@ -5,6 +5,12 @@
                 <span class="senderName" v-if="message.bot">YodaBot: </span>
                 <span class="senderName" v-else>Me: </span>
                 {{message.content}}
+                <ul v-if="message.notFoundOptions">
+                    <li v-for="option in message.notFoundOptions">
+                        {{option.name}}
+                    </li>
+                </ul>
+
             </li>
         </ul>
     </div>
@@ -12,7 +18,7 @@
 
 <script>
     export default {
-        props: {message: {content: String, bot: Boolean}},
+        props: {message: {content: String, bot: Boolean, notFoundOptions: []}},
         watch: {
             'message': function(){
                 this.addMessage()
@@ -25,7 +31,7 @@
         },
         mounted() {
             let $this = this;
-            let urlRequest = "https://inbenta-challenge.test/api/conversation/history";
+            let urlRequest = "http://inbenta-challenge.test/api/conversation/history";
 
             axios.get(urlRequest)
                 .then(function (response){
@@ -41,7 +47,9 @@
             .catch(error => console.log(error))
         },
         methods : {
-            addMessage: function() {this.messages.push(this.message)}
+            addMessage: function() {
+                this.messages.push(this.message)
+            }
 
         }
     }

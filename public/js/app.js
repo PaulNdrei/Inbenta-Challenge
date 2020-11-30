@@ -1925,7 +1925,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       message: {
         content: String,
-        bot: Boolean
+        bot: Boolean,
+        notFoundOptions: []
       },
       text: '',
       inputInfoMessage: ''
@@ -1951,14 +1952,11 @@ __webpack_require__.r(__webpack_exports__);
             return _this.inputInfoMessage = "";
           }
         };
-        var urlRequest = "https://inbenta-challenge.test/api/conversation/message";
+        var urlRequest = "http://inbenta-challenge.test/api/conversation/message";
         axios.post(urlRequest, {
           message: tempMessageObject.content
         }, axiosConfig).then(function (response) {
-          return _this.message = {
-            content: response.data.answer,
-            bot: true
-          };
+          return _this.setMessageResponse(response);
         })["catch"](function (error) {
           return console.log(error);
         });
@@ -1966,6 +1964,21 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.inputInfoMessage = "Input can not be empty...";
+    },
+    setMessageResponse: function setMessageResponse(response) {
+      if (response.data.hasOwnProperty('notFoundOptions')) {
+        this.message = {
+          content: response.data.answer,
+          bot: true,
+          notFoundOptions: response.data.notFoundOptions
+        };
+        return;
+      }
+
+      this.message = {
+        content: response.data.answer,
+        bot: true
+      };
     }
   }
 });
@@ -1993,11 +2006,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     message: {
       content: String,
-      bot: Boolean
+      bot: Boolean,
+      notFoundOptions: []
     }
   },
   watch: {
@@ -2012,7 +2032,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var $this = this;
-    var urlRequest = "https://inbenta-challenge.test/api/conversation/history";
+    var urlRequest = "http://inbenta-challenge.test/api/conversation/history";
     axios.get(urlRequest).then(function (response) {
       var historyMessages = response.data;
 
@@ -38414,7 +38434,22 @@ var render = function() {
           message.bot
             ? _c("span", { staticClass: "senderName" }, [_vm._v("YodaBot: ")])
             : _c("span", { staticClass: "senderName" }, [_vm._v("Me: ")]),
-          _vm._v("\n            " + _vm._s(message.content) + "\n        ")
+          _vm._v("\n            " + _vm._s(message.content) + "\n            "),
+          message.notFoundOptions
+            ? _c(
+                "ul",
+                _vm._l(message.notFoundOptions, function(option) {
+                  return _c("li", [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(option.name) +
+                        "\n                "
+                    )
+                  ])
+                }),
+                0
+              )
+            : _vm._e()
         ])
       }),
       0

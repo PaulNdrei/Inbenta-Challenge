@@ -50,23 +50,22 @@ class ChatBotApiService
             if ($response->successful()) {
 
                 $response = json_decode($response);
-                $test = null;
                 $flags = $response->answers[0]->flags;
 
                 $dataReturnResponse = ['answer' => $response->answers[0]->message];
 
                 $notFound = $this->arrayKeyExists("no-results", $flags);
                 if ($notFound) {
-                    Log::debug("Not found: Not Found");
                     $lastFound = SessionHandler::getLastFound();
-                    //Log::debug("Not found Value: ".$notFoundValue);
                     if (!$lastFound) {
                         $swApiService = new SWApiService();
                         $swResponse = $swApiService->getFirstTenStarWarsCharacters();
                         if ($swResponse->successful()) {
                             $swResponse = json_decode($swResponse);
                             SessionHandler::setLastFound(true);
-                            $dataReturnResponse = ['answer' => $response->answers[0]->message, 'notFound' => true, 'notFoundOptions' => $swResponse->data->allPeople->people];
+                            $notFoundMessage = config("messages.chat.notfound");
+                            $dataReturnResponse = ['answer' => $notFoundMessage, 'notFoundOptions' => $swResponse->data->allPeople->people];
+
                             return response()->json($dataReturnResponse, 200);
                         }
                     }
@@ -80,14 +79,7 @@ class ChatBotApiService
         }
     }
 
-    public function arrayKeyExists(String $key, $arrayResponse){
-        for ($i = 0; $i<count($arrayResponse); $i++){
-            if ($arrayResponse[$i] == $key){
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     public function getHistory(){
 
@@ -117,6 +109,16 @@ class ChatBotApiService
         return response()->json(['error' => 'Not history found for session token'], 404);
 
     }
+
+    public function arrayKeyExists(String $key, $arrayResponse){
+        for ($i = 0; $i<count($arrayResponse); $i++){
+            if ($arrayResponse[$i] == $key){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
 

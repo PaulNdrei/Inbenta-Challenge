@@ -14,7 +14,7 @@
     export default {
         data (){
             return {
-                message: {content: String, bot: Boolean},
+                message: {content: String, bot: Boolean, notFoundOptions: []},
                 text: '',
                 inputInfoMessage: ''
             }
@@ -32,20 +32,23 @@
                         onUploadProgress: progressUpload => this.inputInfoMessage = "YodaBot is writing...",
                         onDownloadProgress: progressEvent => this.inputInfoMessage = ""
                     }
-                    let urlRequest = "https://inbenta-challenge.test/api/conversation/message";
-
+                    let urlRequest = "http://inbenta-challenge.test/api/conversation/message";
                     axios.post(urlRequest, {message: tempMessageObject.content}, axiosConfig)
-                    .then(response => (
-
-                        this.message = {content: response.data.answer, bot: true})
-                    )
+                    .then(response => this.setMessageResponse(response))
                     .catch(error => console.log(error))
                     return;
                 }
                 this.inputInfoMessage = "Input can not be empty...";
 
             },
+            setMessageResponse: function (response){
+                if (response.data.hasOwnProperty('notFoundOptions')){
+                    this.message = {content: response.data.answer, bot: true, notFoundOptions: response.data.notFoundOptions}
+                    return;
+                }
 
+                this.message = {content: response.data.answer, bot: true}
+            }
         }
     }
 </script>
