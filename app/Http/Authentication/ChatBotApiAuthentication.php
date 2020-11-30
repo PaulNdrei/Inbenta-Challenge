@@ -69,8 +69,6 @@ class ChatBotApiAuthentication
             return $authCredentials;
 
         }
-        $response->throw();
-
         return null;
     }
 

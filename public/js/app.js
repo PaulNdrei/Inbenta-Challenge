@@ -1958,7 +1958,7 @@ __webpack_require__.r(__webpack_exports__);
           message: tempMessageObject.content
         }, axiosConfig).then(function (response) {
           return _this.message = {
-            content: response.data.answers[0].message,
+            content: response.data.answer,
             bot: true
           };
         })["catch"](function (error) {
@@ -2009,11 +2009,28 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      response: '',
       messages: []
     };
   },
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    var $this = this;
+    axios.get('http://inbenta-challenge.test/api/conversation/history').then(function (response) {
+      var historyMessages = response.data;
+
+      for (var i = 0; i < historyMessages.length; i++) {
+        var user = historyMessages[i].user;
+        var isBot = false;
+        if (user === "bot") isBot = true;
+        var tempObject = {
+          content: historyMessages[i].message,
+          bot: isBot
+        };
+        $this.messages.push(tempObject);
+      }
+    })["catch"](function (error) {
+      return console.log(error);
+    });
+  },
   methods: {
     addMessage: function addMessage() {
       this.messages.push(this.message);
@@ -38319,7 +38336,6 @@ var render = function() {
             _vm._v(_vm._s(_vm.inputInfoMessage))
           ]),
           _vm._v(" "),
-          _c("br"),
           _c("input", {
             directives: [
               {

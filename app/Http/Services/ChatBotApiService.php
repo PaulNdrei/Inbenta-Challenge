@@ -19,6 +19,10 @@ class ChatBotApiService
         $conversationSession = new ConversationSession($authCredentials);
         $messageSession = $conversationSession->createOrGetSession();
 
+        if ($authCredentials == null){
+            return response()->json(['error' => 'Not posible to authenticate to Chat Bot Api'], 401);
+        }
+
         if ($messageSession != null){
 
             $headers = ['x-inbenta-key' => $chatBotApiAuthentication->getApiKey(),
@@ -47,7 +51,7 @@ class ChatBotApiService
             }
         }
 
-        response()->json(['error' => 'Not posible to get and answer.'], 400);
+        return response()->json(['error' => 'Not posible to get and answer.'], 400);
 
     }
 
@@ -72,15 +76,11 @@ class ChatBotApiService
             Log::debug("Response from Inbenta Chat Bot API: ".$response);
 
             if ($response->ok()){
-                //$response = json_decode($response);
-
                 return $response;
             }
-            return $response->status();
-
         }
 
-        return "test";
+        return response()->json(['error' => 'Not history found for session token'], 404);
 
     }
 
