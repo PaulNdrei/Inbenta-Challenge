@@ -1,4 +1,4 @@
-<p align="center"><img src="https://i.imgur.com/Q3BI5Pj.png" width="400"></p>
+<p align="center"><img src="https://i.imgur.com/4oAmW3z.png" width="128"></p>
 
 ## Inbenta Challenge
 
