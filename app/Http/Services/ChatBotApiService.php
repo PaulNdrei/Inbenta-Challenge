@@ -62,8 +62,7 @@ class ChatBotApiService
                 if ($notFound) {
                     $lastFound = SessionHandler::getLastFound();
                     if (!$lastFound) {
-                        $swApiService = new SWApiService();
-                        $swResponse = $swApiService->getFirstTenStarWarsCharacters();
+                        $swResponse = $this->swApiService->getFirstTenStarWarsCharacters();
                         if ($swResponse->successful()) {
                             $swResponse = json_decode($swResponse);
                             SessionHandler::setLastFound(true);
