@@ -9,7 +9,11 @@ use Illuminate\Support\Facades\Log;
 
 class ChatBotApiService
 {
-    public function __construct(){}
+    private $swApiService;
+
+    public function __construct(SWApiService $swApiService){
+        $this->swApiService = $swApiService;
+    }
 
     public function sendMessageAndGetAnswer(String $message)
     {
@@ -110,6 +114,18 @@ class ChatBotApiService
 
     }
 
+    public function getSWFilms(){
+        $swResponse = $this->swApiService->getFirstSixStarWarsFilms();
+
+        if ($swResponse->successful()){
+            $swResponse = json_decode($swResponse);
+            return response()->json(['answer' => config("messages.chat.force"), 'filmOptions' => $swResponse->data->allFilms->films], 200);
+        }
+        return response()->json(['error' => 'Not posible to get film options.'], 400);
+
+    }
+
+
     public function arrayKeyExists(String $key, $arrayResponse){
         for ($i = 0; $i<count($arrayResponse); $i++){
             if ($arrayResponse[$i] == $key){
@@ -118,6 +134,7 @@ class ChatBotApiService
         }
         return false;
     }
+
 
 
 

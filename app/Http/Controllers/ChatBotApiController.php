@@ -17,10 +17,14 @@ class ChatBotApiController extends Controller
 
     public function sendMessage(Request $request){
         if ($request->has('message')){
-            return $this->chatBotApiService->sendMessageAndGetAnswer($request->message);
+            $message = $request->message;
+
+            if (str_contains($message, config('messages.keywords.force'))){
+                return $this->chatBotApiService->getSWFilms();
+            }
+            return $this->chatBotApiService->sendMessageAndGetAnswer($message);
         }
         return response()->json(['error' => 'Message field is required'], 400);
-
     }
 
     public function getHistory(){

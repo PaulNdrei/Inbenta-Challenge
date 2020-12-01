@@ -42,12 +42,17 @@
 
             },
             setMessageResponse: function (response){
-                if (response.data.hasOwnProperty('notFoundOptions')){
-                    this.message = {content: response.data.answer, bot: true, notFoundOptions: response.data.notFoundOptions}
+                let responseData = response.data;
+                if (responseData.hasOwnProperty('notFoundOptions')){
+                    this.message = {content: responseData.answer, bot: true, notFoundOptions: responseData.notFoundOptions}
                     return;
+                }else{
+                    if (responseData.hasOwnProperty('filmOptions')){
+                        this.message = {content: responseData.answer, bot: true, filmOptions: responseData.filmOptions}
+                        return;
+                    }
                 }
-
-                this.message = {content: response.data.answer, bot: true}
+                this.message = {content: responseData.answer, bot: true}
             }
         }
     }

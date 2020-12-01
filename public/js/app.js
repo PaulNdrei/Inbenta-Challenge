@@ -1966,17 +1966,28 @@ __webpack_require__.r(__webpack_exports__);
       this.inputInfoMessage = "Input can not be empty...";
     },
     setMessageResponse: function setMessageResponse(response) {
-      if (response.data.hasOwnProperty('notFoundOptions')) {
+      var responseData = response.data;
+
+      if (responseData.hasOwnProperty('notFoundOptions')) {
         this.message = {
-          content: response.data.answer,
+          content: responseData.answer,
           bot: true,
-          notFoundOptions: response.data.notFoundOptions
+          notFoundOptions: responseData.notFoundOptions
         };
         return;
+      } else {
+        if (responseData.hasOwnProperty('filmOptions')) {
+          this.message = {
+            content: responseData.answer,
+            bot: true,
+            filmOptions: responseData.filmOptions
+          };
+          return;
+        }
       }
 
       this.message = {
-        content: response.data.answer,
+        content: responseData.answer,
         bot: true
       };
     }
@@ -1994,6 +2005,11 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
 //
 //
 //
@@ -38434,7 +38450,9 @@ var render = function() {
           message.bot
             ? _c("span", { staticClass: "senderName" }, [_vm._v("YodaBot: ")])
             : _c("span", { staticClass: "senderName" }, [_vm._v("Me: ")]),
-          _vm._v("\n            " + _vm._s(message.content) + "\n            "),
+          _vm._v(" "),
+          _c("span", { domProps: { innerHTML: _vm._s(message.content) } }),
+          _vm._v(" "),
           message.notFoundOptions
             ? _c(
                 "ul",
@@ -38443,6 +38461,22 @@ var render = function() {
                     _vm._v(
                       "\n                    " +
                         _vm._s(option.name) +
+                        "\n                "
+                    )
+                  ])
+                }),
+                0
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          message.filmOptions
+            ? _c(
+                "ul",
+                _vm._l(message.filmOptions, function(film) {
+                  return _c("li", [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(film.title) +
                         "\n                "
                     )
                   ])

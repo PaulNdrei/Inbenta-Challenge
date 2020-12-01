@@ -4,13 +4,18 @@
             <li v-for="message in messages">
                 <span class="senderName" v-if="message.bot">YodaBot: </span>
                 <span class="senderName" v-else>Me: </span>
-                {{message.content}}
+                <span v-html="message.content"></span>
+
                 <ul v-if="message.notFoundOptions">
                     <li v-for="option in message.notFoundOptions">
                         {{option.name}}
                     </li>
                 </ul>
-
+                <ul v-if="message.filmOptions">
+                    <li v-for="film in message.filmOptions">
+                        {{film.title}}
+                    </li>
+                </ul>
             </li>
         </ul>
     </div>

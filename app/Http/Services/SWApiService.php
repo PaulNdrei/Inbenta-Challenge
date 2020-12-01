@@ -21,7 +21,7 @@ class SWApiService
         return $this->doSWGetRequest(["query" => "{allPeople(first: 10) {people { name,}}}"]);
     }
 
-    public function getFirstEightStarWarsFilms()
+    public function getFirstSixStarWarsFilms()
     {
         return $this->doSWGetRequest(["query" => "{allFilms(first: 8) {films { title,}}}"]);
     }
