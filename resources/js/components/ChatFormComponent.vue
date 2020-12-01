@@ -32,8 +32,8 @@
                         onUploadProgress: progressUpload => this.inputInfoMessage = "YodaBot is writing...",
                         onDownloadProgress: progressEvent => this.inputInfoMessage = ""
                     }
-                    let urlRequest = "http://inbenta-challenge.test/api/conversation/message";
-                    axios.post(urlRequest, {message: tempMessageObject.content}, axiosConfig)
+                    let apiSendMessageUrl = process.env.MIX_LOCAL_API_URL+""+process.env.MIX_LOCAL_API_SEND_MESSAGE_ENDPOINT
+                    axios.post(apiSendMessageUrl, {message: tempMessageObject.content}, axiosConfig)
                     .then(response => this.setMessageResponse(response))
                     .catch(error => console.log(error))
                     return;
