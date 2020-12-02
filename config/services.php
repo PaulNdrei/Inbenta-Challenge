@@ -33,10 +33,16 @@ return [
     'inbenta' => [
         'api_key' => env('INBENTA_API_KEY'),
         'secret' => env('INBENTA_SECRET'),
-        'auth_url' => env('INBENTA_AUTH_URL'),
+        'refresh_token_endpoint' => env('INBENTA_AUTH_REFRESH_ENDPOINT'),
         'conversation_endpoint' => env('INBENTA_API_CONVERSATION_ENDPOINT'),
         'conversation_message_endpoint' => env('INBENTA_API_CONVERSATION_MESSAGE_ENDPOINT'),
         'conversation_history_endpoint' => env('INBENTA_API_CONVERSATION_HISTORY_ENDPOINT'),
+    ],
+    'inbenta-auth' => [
+        'url' => env('INBENTA_AUTH_URL'),
+        'auth_endpoint' => env('INBENTA_AUTH_ENDPOINT'),
+        'refresh_token_endpoint' => env('INBENTA_AUTH_REFRESH_TOKEN_ENDPOINT')
+
     ],
     'inbentasw' => [
         'api_url' => env('INBENTA_SW_API_URL'),

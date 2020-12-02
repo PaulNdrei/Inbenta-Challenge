@@ -1952,7 +1952,7 @@ __webpack_require__.r(__webpack_exports__);
             return _this.inputInfoMessage = "";
           }
         };
-        var apiSendMessageUrl = "http://Inbenta-Challenge.test/api" + "" + "/conversation/message";
+        var apiSendMessageUrl = "http://inbenta-challenge.test/api" + "" + "/conversation/message";
         axios.post(apiSendMessageUrl, {
           message: tempMessageObject.content
         }, axiosConfig).then(function (response) {
@@ -2048,7 +2048,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var $this = this;
-    var apiGetHistoryUrl = "http://Inbenta-Challenge.test/api" + "" + "/conversation/history";
+    var apiGetHistoryUrl = "http://inbenta-challenge.test/api" + "" + "/conversation/history";
     axios.get(apiGetHistoryUrl).then(function (response) {
       var historyMessages = response.data;
 

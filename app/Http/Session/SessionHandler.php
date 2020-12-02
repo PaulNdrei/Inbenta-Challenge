@@ -4,7 +4,7 @@
 namespace App\Http\Session;
 
 
-use App\Http\Authentication\ChatBotAuthCredentials;
+use App\Http\Authentication\IbentaAuthCredentials;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -32,7 +32,7 @@ class SessionHandler
 
     }
 
-    public static function checkIfCredentialsAreValidAndGet(): ?ChatBotAuthCredentials
+    public static function checkIfCredentialsAreValidAndGet(): ?IbentaAuthCredentials
     {
         $values = json_encode(session()->get('chatbot.credentials'));
 
@@ -45,7 +45,11 @@ class SessionHandler
             }
             Log::debug("Check Credentials: Valid");
 
-            return new ChatBotAuthCredentials($values->accessToken, $values->chatBotApiUrl, $values->expiration);
+            return IbentaAuthCredentials::create()
+                ->withAccessToken($values->accessToken)
+                ->withChatBotApiUrl($values->chatBotApiUrl)
+                ->withExpiration($values->expiration);
+
         }catch (Exception $e){
 
             Log::debug("Check Credentials: Not Valid or Null");
@@ -55,7 +59,7 @@ class SessionHandler
     }
 
 
-    public static function saveCredentialsToSession(ChatBotAuthCredentials $authCredentials): void
+    public static function saveCredentialsToSession(IbentaAuthCredentials $authCredentials): void
     {
 
         session(['chatbot.credentials.accessToken' => $authCredentials->getAccessToken(), 'chatbot.credentials.chatBotApiUrl' => $authCredentials->getChatBotApiUrl(),

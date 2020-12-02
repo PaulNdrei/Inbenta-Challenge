@@ -1,36 +1,36 @@
 <?php
 namespace App\Http\Services;
 
-use App\Http\Authentication\ChatBotApiAuthentication;
+use App\Http\Authentication\IbentaAuthCredentials;
 use App\Http\Session\ConversationSession;
 use App\Http\Session\SessionHandler;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class ChatBotApiService
+class IbentaApiService
 {
     private $swApiService;
+    private $ibentaApiAuthenticationService;
 
-    public function __construct(SWApiService $swApiService){
+    public function __construct(IbentaApiAuthenticationService $ibentaApiAuthenticationService, SWApiService $swApiService){
+        $this->ibentaApiAuthenticationService = $ibentaApiAuthenticationService;
         $this->swApiService = $swApiService;
     }
 
     public function sendMessageAndGetAnswer(String $message)
     {
-
-        $chatBotApiAuthentication = new ChatBotApiAuthentication();
-        $authCredentials = $chatBotApiAuthentication->createOrGetAuthCredentials();
-
-        $conversationSession = new ConversationSession($authCredentials);
-        $messageSession = $conversationSession->createOrGetSession();
+        $authCredentials = $this->getInbentaAuthCredentials();
 
         if ($authCredentials == null) {
             return response()->json(['error' => 'Not posible to authenticate to Chat Bot Api'], 401);
         }
 
+        $conversationSession = new ConversationSession($authCredentials);
+        $messageSession = $conversationSession->createOrGetSession();
+
         if ($messageSession != null) {
 
-            $headers = ['x-inbenta-key' => $chatBotApiAuthentication->getApiKey(),
+            $headers = ['x-inbenta-key' => $this->ibentaApiAuthenticationService->getApiKey(),
                 'Authorization' => 'Bearer ' . $authCredentials->getAccessToken(), 'x-inbenta-session' => 'Bearer ' . $messageSession->getSessionToken()];
 
             $body = [
@@ -89,9 +89,9 @@ class ChatBotApiService
         $messageSession = SessionHandler::checkIfSessionIsValidAndGet();
 
         if ($messageSession != null){
-            $chatBotApiAuthentication = new ChatBotApiAuthentication();
-            $authCredentials = $chatBotApiAuthentication->createOrGetAuthCredentials();
-            $headers = ['x-inbenta-key' => $chatBotApiAuthentication->getApiKey(),
+
+            $authCredentials = $this->getInbentaAuthCredentials();
+            $headers = ['x-inbenta-key' => $this->ibentaApiAuthenticationService->getApiKey(),
                 'Authorization' => 'Bearer '.$authCredentials->getAccessToken(), 'x-inbenta-session' => 'Bearer '.$messageSession->getSessionToken()];
 
 
@@ -113,17 +113,12 @@ class ChatBotApiService
 
     }
 
-    public function getSWFilms(){
-        $swResponse = $this->swApiService->getFirstSixStarWarsFilms();
 
-        if ($swResponse->successful()){
-            $swResponse = json_decode($swResponse);
-            return response()->json(['answer' => config("messages.chat.force"), 'filmOptions' => $swResponse->data->allFilms->films], 200);
-        }
-        return response()->json(['error' => 'Not posible to get film options.'], 400);
 
+    public function getInbentaAuthCredentials (): ?IbentaAuthCredentials
+    {
+        return $this->ibentaApiAuthenticationService->createOrGetAuthCredentials();
     }
-
 
     public function arrayKeyExists(String $key, $arrayResponse){
         for ($i = 0; $i<count($arrayResponse); $i++){

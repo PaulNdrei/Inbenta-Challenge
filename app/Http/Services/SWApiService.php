@@ -23,7 +23,14 @@ class SWApiService
 
     public function getFirstSixStarWarsFilms()
     {
-        return $this->doSWGetRequest(["query" => "{allFilms(first: 8) {films { title,}}}"]);
+        $swResponse = $this->doSWGetRequest(["query" => "{allFilms(first: 8) {films { title,}}}"]);
+
+        if ($swResponse->successful()){
+            $swResponse = json_decode($swResponse);
+            return response()->json(['answer' => config("messages.chat.force"), 'filmOptions' => $swResponse->data->allFilms->films], 200);
+        }
+        return response()->json(['error' => 'Not posible to get film options.'], 400);
+
     }
 
     public function doSWGetRequest($queryBody): ?Response

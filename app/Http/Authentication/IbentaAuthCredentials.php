@@ -5,19 +5,42 @@ namespace App\Http\Authentication;
 
 use Illuminate\Support\Facades\Log;
 
-class ChatBotAuthCredentials
+class IbentaAuthCredentials
 {
     private $accessToken;
     private $chatBotApiUrl;
     private $expiration;
 
-    public function __construct($accessToken, $chatBotApiUrl, $expiration)
+    public function __construct()
+    {
+    }
+
+    public static function create() {
+        $instance = new self();
+        return $instance;
+    }
+
+
+    public function withAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
-        $this->chatBotApiUrl = $chatBotApiUrl;
-        $this->expiration = $expiration;
+        return $this;
 
     }
+
+    public function withChatBotApiUrl($chatBotApiUrl)
+    {
+        $this->chatBotApiUrl = $chatBotApiUrl;
+        return $this;
+
+    }
+
+    public function withExpiration($expiration)
+    {
+        $this->expiration = $expiration;
+        return $this;
+    }
+
 
     public function getAccessToken(): ?string
     {

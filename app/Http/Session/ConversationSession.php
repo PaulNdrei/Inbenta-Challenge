@@ -4,8 +4,8 @@
 namespace App\Http\Session;
 
 
-use App\Http\Authentication\ChatBotApiAuthentication;
-use App\Http\Authentication\ChatBotAuthCredentials;
+use App\Http\Authentication\IbentaApiAuthenticationService;
+use App\Http\Authentication\IbentaAuthCredentials;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +15,7 @@ class ConversationSession
     private $apiKey;
     private $authCredentials;
 
-    public function __construct(ChatBotAuthCredentials $authCredentials)
+    public function __construct(IbentaAuthCredentials $authCredentials)
     {
        $this->apiConversationEndpoint = config('services.inbenta.conversation_endpoint');
        $this->apiKey = config('services.inbenta.api_key');

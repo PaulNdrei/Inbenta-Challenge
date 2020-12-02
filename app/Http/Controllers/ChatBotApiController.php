@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Services\ChatBotApiService;
+use App\Http\Services\IbentaApiService;
+use App\Http\Services\SWApiService;
 use Illuminate\Http\Request;
 
 class ChatBotApiController extends Controller
 {
-    private $chatBotApiService;
+    private $ibentaApiService;
+    private $swApiService;
 
-    public function __construct(ChatBotApiService $chatBotApiService)
+    public function __construct(IbentaApiService $ibentaApiService, SWApiService $swApiService)
     {
-        $this->chatBotApiService = $chatBotApiService;
-
+        $this->ibentaApiService = $ibentaApiService;
+        $this->swApiService = $swApiService;
     }
 
     public function sendMessage(Request $request){
@@ -20,15 +22,15 @@ class ChatBotApiController extends Controller
             $message = $request->message;
 
             if (str_contains($message, config('messages.keywords.force'))){
-                return $this->chatBotApiService->getSWFilms();
+                return $this->swApiService->getFirstSixStarWarsFilms();
             }
-            return $this->chatBotApiService->sendMessageAndGetAnswer($message);
+            return $this->ibentaApiService->sendMessageAndGetAnswer($message);
         }
         return response()->json(['error' => 'Message field is required'], 400);
     }
 
     public function getHistory(){
-        return $this->chatBotApiService->getHistory();
+        return $this->ibentaApiService->getHistory();
     }
 
 
