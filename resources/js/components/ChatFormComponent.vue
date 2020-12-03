@@ -35,7 +35,7 @@
                     let apiSendMessageUrl = process.env.MIX_LOCAL_API_URL+""+process.env.MIX_LOCAL_API_SEND_MESSAGE_ENDPOINT
                     axios.post(apiSendMessageUrl, {message: tempMessageObject.content}, axiosConfig)
                     .then(response => this.setMessageResponse(response))
-                    .catch(error => console.log(error))
+                    .catch(error => console.log(error.response.data.error))
                     return;
                 }
                 this.inputInfoMessage = "Input can not be empty...";

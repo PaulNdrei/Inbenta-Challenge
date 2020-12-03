@@ -49,7 +49,7 @@
                         $this.messages.push(tempObject);
                     }
                 })
-            .catch(error => console.log(error))
+            .catch(error => console.log(error.response.data.error))
         },
         methods : {
             addMessage: function() {
